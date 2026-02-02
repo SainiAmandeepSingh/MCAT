@@ -1,0 +1,936 @@
+{
+  "metadata": {
+    "title": "MCAT Comprehensive Flashcard Deck",
+    "description": "Flashcards for MCAT preparation covering all four sections",
+    "created_for": "Arsh",
+    "version": "1.0"
+  },
+  "categories": [
+    {
+      "id": "bio_biochem",
+      "name": "Biology/Biochemistry",
+      "color": "#4CAF50",
+      "icon": "🧬"
+    },
+    {
+      "id": "chem",
+      "name": "Chemistry",
+      "color": "#2196F3",
+      "icon": "⚗️"
+    },
+    {
+      "id": "physics",
+      "name": "Physics",
+      "color": "#FF9800",
+      "icon": "⚡"
+    },
+    {
+      "id": "psych_soc",
+      "name": "Psychology/Sociology",
+      "color": "#9C27B0",
+      "icon": "🧠"
+    }
+  ],
+  "flashcards": [
+    {
+      "id": 1,
+      "category": "bio_biochem",
+      "subcategory": "Amino Acids",
+      "question": "What are the three aromatic amino acids?",
+      "answer": "Phenylalanine (Phe, F), Tyrosine (Tyr, Y), and Tryptophan (Trp, W). They contain benzene rings and absorb UV light at 280nm.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 2,
+      "category": "bio_biochem",
+      "subcategory": "Amino Acids",
+      "question": "Which amino acids are positively charged at physiological pH?",
+      "answer": "Lysine (Lys, K), Arginine (Arg, R), and Histidine (His, H). These are the basic amino acids with pKa values that allow them to accept protons.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 3,
+      "category": "bio_biochem",
+      "subcategory": "Amino Acids",
+      "question": "Which amino acids are negatively charged at physiological pH?",
+      "answer": "Aspartic acid (Asp, D) and Glutamic acid (Glu, E). These acidic amino acids have carboxyl groups in their side chains.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 4,
+      "category": "bio_biochem",
+      "subcategory": "Enzymes",
+      "question": "What is the Michaelis-Menten equation?",
+      "answer": "v = (Vmax × [S]) / (Km + [S]). Vmax is maximum velocity, [S] is substrate concentration, and Km is the Michaelis constant (substrate concentration at half Vmax).",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 5,
+      "category": "bio_biochem",
+      "subcategory": "Enzymes",
+      "question": "What happens to Km and Vmax in competitive inhibition?",
+      "answer": "Km increases (apparent), Vmax stays the same. Competitive inhibitors compete with substrate for the active site and can be overcome by increasing substrate concentration.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 6,
+      "category": "bio_biochem",
+      "subcategory": "Enzymes",
+      "question": "What happens to Km and Vmax in non-competitive inhibition?",
+      "answer": "Km stays the same, Vmax decreases. Non-competitive inhibitors bind to an allosteric site and cannot be overcome by increasing substrate.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 7,
+      "category": "bio_biochem",
+      "subcategory": "Metabolism",
+      "question": "What is the net ATP yield from glycolysis?",
+      "answer": "2 ATP (and 2 NADH). Glycolysis uses 2 ATP in the investment phase and produces 4 ATP in the payoff phase.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 8,
+      "category": "bio_biochem",
+      "subcategory": "Metabolism",
+      "question": "What are the three irreversible enzymes in glycolysis?",
+      "answer": "Hexokinase/Glucokinase, Phosphofructokinase-1 (PFK-1), and Pyruvate kinase. These are the rate-limiting steps and regulatory points.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 9,
+      "category": "bio_biochem",
+      "subcategory": "Metabolism",
+      "question": "Where does the Krebs cycle (TCA cycle) occur?",
+      "answer": "Mitochondrial matrix. Pyruvate enters the mitochondria and is converted to Acetyl-CoA before entering the cycle.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 10,
+      "category": "bio_biochem",
+      "subcategory": "Metabolism",
+      "question": "How many ATP are produced per glucose molecule in aerobic respiration?",
+      "answer": "Approximately 30-32 ATP. This includes glycolysis (2), pyruvate oxidation (2 NADH), Krebs cycle, and oxidative phosphorylation.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 11,
+      "category": "bio_biochem",
+      "subcategory": "Genetics",
+      "question": "What is the difference between a missense and nonsense mutation?",
+      "answer": "Missense: point mutation causing a different amino acid. Nonsense: point mutation creating a premature stop codon, truncating the protein.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 12,
+      "category": "bio_biochem",
+      "subcategory": "Genetics",
+      "question": "What are the phases of the cell cycle?",
+      "answer": "G1 (growth), S (DNA synthesis), G2 (preparation for mitosis), M (mitosis). G0 is a quiescent phase for non-dividing cells.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 13,
+      "category": "bio_biochem",
+      "subcategory": "Genetics",
+      "question": "What is the function of telomerase?",
+      "answer": "Telomerase extends telomeres (chromosome ends) by adding TTAGGG repeats. It is active in stem cells and cancer cells but inactive in most somatic cells.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 14,
+      "category": "bio_biochem",
+      "subcategory": "Molecular Biology",
+      "question": "What direction does DNA polymerase synthesize?",
+      "answer": "5' to 3' direction only. It adds nucleotides to the 3'-OH end of the growing strand.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 15,
+      "category": "bio_biochem",
+      "subcategory": "Molecular Biology",
+      "question": "What is the difference between the leading and lagging strand?",
+      "answer": "Leading strand: synthesized continuously 5'→3' toward the replication fork. Lagging strand: synthesized discontinuously as Okazaki fragments away from the fork.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 16,
+      "category": "bio_biochem",
+      "subcategory": "Cell Biology",
+      "question": "What is the function of the rough endoplasmic reticulum?",
+      "answer": "Protein synthesis and modification. Ribosomes on its surface synthesize proteins destined for secretion, membranes, or lysosomes.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 17,
+      "category": "bio_biochem",
+      "subcategory": "Cell Biology",
+      "question": "What is the function of the Golgi apparatus?",
+      "answer": "Protein modification, sorting, and packaging. It adds carbohydrates (glycosylation), phosphates, and sorts proteins to their destinations.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 18,
+      "category": "bio_biochem",
+      "subcategory": "Physiology",
+      "question": "What is the order of blood flow through the heart?",
+      "answer": "Vena cava → Right atrium → Tricuspid valve → Right ventricle → Pulmonary valve → Pulmonary artery → Lungs → Pulmonary vein → Left atrium → Mitral valve → Left ventricle → Aortic valve → Aorta",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 19,
+      "category": "bio_biochem",
+      "subcategory": "Physiology",
+      "question": "What is the difference between Type 1 and Type 2 diabetes?",
+      "answer": "Type 1: Autoimmune destruction of pancreatic beta cells, no insulin production. Type 2: Insulin resistance, cells don't respond properly to insulin.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 20,
+      "category": "bio_biochem",
+      "subcategory": "Physiology",
+      "question": "What hormones does the anterior pituitary secrete?",
+      "answer": "FSH, LH, ACTH, TSH, Prolactin, and Growth Hormone. Remember: FLAT PiG (FSH, LH, ACTH, TSH, Prolactin, GH).",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 21,
+      "category": "bio_biochem",
+      "subcategory": "Immunology",
+      "question": "What is the difference between innate and adaptive immunity?",
+      "answer": "Innate: Non-specific, immediate response (barriers, phagocytes, complement). Adaptive: Specific, develops memory (B cells, T cells, antibodies).",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 22,
+      "category": "bio_biochem",
+      "subcategory": "Immunology",
+      "question": "What is the function of Helper T cells (CD4+)?",
+      "answer": "Coordinate immune responses by releasing cytokines. They activate B cells, cytotoxic T cells, and macrophages. They recognize antigens presented by MHC Class II.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 23,
+      "category": "bio_biochem",
+      "subcategory": "Immunology",
+      "question": "What is the function of Cytotoxic T cells (CD8+)?",
+      "answer": "Kill infected or cancerous cells directly using perforin and granzymes. They recognize antigens presented by MHC Class I.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 24,
+      "category": "bio_biochem",
+      "subcategory": "Biochemistry",
+      "question": "What are the products of beta-oxidation of fatty acids?",
+      "answer": "Acetyl-CoA, FADH2, and NADH. Each cycle removes 2 carbons as acetyl-CoA and generates 1 FADH2 and 1 NADH.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 25,
+      "category": "bio_biochem",
+      "subcategory": "Biochemistry",
+      "question": "What is the committed step of cholesterol synthesis?",
+      "answer": "HMG-CoA reductase converting HMG-CoA to mevalonate. This enzyme is the target of statin drugs.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 26,
+      "category": "chem",
+      "subcategory": "General Chemistry",
+      "question": "What is the ideal gas law?",
+      "answer": "PV = nRT. P = pressure, V = volume, n = moles, R = gas constant (8.314 J/mol·K or 0.0821 L·atm/mol·K), T = temperature in Kelvin.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 27,
+      "category": "chem",
+      "subcategory": "General Chemistry",
+      "question": "What is Le Chatelier's Principle?",
+      "answer": "When a system at equilibrium is stressed, it shifts to counteract the stress. Adding reactants shifts right, adding products shifts left, heat acts as a reactant (endothermic) or product (exothermic).",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 28,
+      "category": "chem",
+      "subcategory": "General Chemistry",
+      "question": "What is the relationship between pH and pOH?",
+      "answer": "pH + pOH = 14 (at 25°C). pH = -log[H+], pOH = -log[OH-].",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 29,
+      "category": "chem",
+      "subcategory": "General Chemistry",
+      "question": "What is a buffer and how does it work?",
+      "answer": "A buffer resists pH changes. It consists of a weak acid and its conjugate base. The weak acid neutralizes added base, and the conjugate base neutralizes added acid.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 30,
+      "category": "chem",
+      "subcategory": "General Chemistry",
+      "question": "What is the Henderson-Hasselbalch equation?",
+      "answer": "pH = pKa + log([A-]/[HA]). Used to calculate pH of buffer solutions. When [A-] = [HA], pH = pKa.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 31,
+      "category": "chem",
+      "subcategory": "General Chemistry",
+      "question": "What happens to boiling point with increased intermolecular forces?",
+      "answer": "Boiling point increases. Stronger IMFs (hydrogen bonding > dipole-dipole > London dispersion) require more energy to overcome, raising the boiling point.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 32,
+      "category": "chem",
+      "subcategory": "General Chemistry",
+      "question": "What is electronegativity and its trend on the periodic table?",
+      "answer": "Electronegativity is the ability of an atom to attract electrons. It increases going up and to the right on the periodic table (F is most electronegative).",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 33,
+      "category": "chem",
+      "subcategory": "General Chemistry",
+      "question": "What is the difference between SN1 and SN2 reactions?",
+      "answer": "SN1: Two-step, carbocation intermediate, racemization, favored by tertiary carbons and polar protic solvents. SN2: One-step, concerted, inversion of configuration, favored by primary carbons and polar aprotic solvents.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 34,
+      "category": "chem",
+      "subcategory": "Organic Chemistry",
+      "question": "What is the order of stability of carbocations?",
+      "answer": "Tertiary > Secondary > Primary > Methyl. More alkyl groups stabilize the positive charge through hyperconjugation and inductive effects.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 35,
+      "category": "chem",
+      "subcategory": "Organic Chemistry",
+      "question": "What reagent is used for Grignard reactions?",
+      "answer": "R-MgX (alkyl or aryl magnesium halide). Grignard reagents are strong nucleophiles and bases. They react with carbonyl compounds to form alcohols.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 36,
+      "category": "chem",
+      "subcategory": "Organic Chemistry",
+      "question": "What is the product of aldol condensation?",
+      "answer": "An α,β-unsaturated carbonyl compound (enone). Two aldehydes or ketones combine, forming a C-C bond, followed by dehydration.",
+      "difficulty": "hard",
+      "high_yield": false
+    },
+    {
+      "id": 37,
+      "category": "chem",
+      "subcategory": "Organic Chemistry",
+      "question": "What functional group results from the reaction of a carboxylic acid with an alcohol?",
+      "answer": "An ester (R-COO-R'). This is called Fischer esterification and requires an acid catalyst.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 38,
+      "category": "chem",
+      "subcategory": "Organic Chemistry",
+      "question": "What is the difference between E1 and E2 elimination?",
+      "answer": "E1: Two-step, carbocation intermediate, favors tertiary carbons. E2: One-step, concerted, requires strong base, anti-periplanar geometry.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 39,
+      "category": "chem",
+      "subcategory": "Organic Chemistry",
+      "question": "What is Markovnikov's rule?",
+      "answer": "In addition reactions, hydrogen adds to the carbon with more hydrogens (the more substituted carbon gets the electrophile). The rich get richer.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 40,
+      "category": "chem",
+      "subcategory": "Organic Chemistry",
+      "question": "What is the hybridization of carbons in alkanes, alkenes, and alkynes?",
+      "answer": "Alkanes: sp³ (tetrahedral, 109.5°). Alkenes: sp² (trigonal planar, 120°). Alkynes: sp (linear, 180°).",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 41,
+      "category": "chem",
+      "subcategory": "Organic Chemistry",
+      "question": "What are directing groups in electrophilic aromatic substitution?",
+      "answer": "Ortho/para directors: electron-donating groups (-OH, -NH2, -OR, -R). Meta directors: electron-withdrawing groups (-NO2, -CN, -COOH, -CHO).",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 42,
+      "category": "chem",
+      "subcategory": "Organic Chemistry",
+      "question": "What is the difference between conformational and configurational isomers?",
+      "answer": "Conformational: Different rotations around single bonds (interconvertible). Configurational: Different arrangements requiring bond breaking to interconvert (enantiomers, diastereomers).",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 43,
+      "category": "chem",
+      "subcategory": "Electrochemistry",
+      "question": "What is the relationship between Gibbs free energy and cell potential?",
+      "answer": "ΔG = -nFE. Negative ΔG (spontaneous) corresponds to positive E (galvanic cell). n = moles of electrons, F = Faraday constant (96,485 C/mol).",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 44,
+      "category": "chem",
+      "subcategory": "Electrochemistry",
+      "question": "In an electrochemical cell, what happens at the anode vs cathode?",
+      "answer": "Anode: Oxidation occurs (electrons leave). Cathode: Reduction occurs (electrons arrive). Remember: An Ox, Red Cat.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 45,
+      "category": "chem",
+      "subcategory": "Thermodynamics",
+      "question": "What is the relationship between enthalpy, entropy, and Gibbs free energy?",
+      "answer": "ΔG = ΔH - TΔS. Reaction is spontaneous when ΔG < 0. Favored by negative ΔH (exothermic) and positive ΔS (increased disorder).",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 46,
+      "category": "chem",
+      "subcategory": "Kinetics",
+      "question": "What is the difference between zero, first, and second order reactions?",
+      "answer": "Zero order: rate = k, [A] vs t is linear. First order: rate = k[A], ln[A] vs t is linear, t½ = 0.693/k. Second order: rate = k[A]², 1/[A] vs t is linear.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 47,
+      "category": "chem",
+      "subcategory": "Kinetics",
+      "question": "What is the Arrhenius equation?",
+      "answer": "k = Ae^(-Ea/RT). k = rate constant, A = pre-exponential factor, Ea = activation energy, R = gas constant, T = temperature.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 48,
+      "category": "chem",
+      "subcategory": "Acids and Bases",
+      "question": "What is the difference between a strong and weak acid?",
+      "answer": "Strong acids completely dissociate (HCl, HNO3, H2SO4). Weak acids partially dissociate and have an equilibrium (Ka < 1).",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 49,
+      "category": "chem",
+      "subcategory": "Acids and Bases",
+      "question": "What is a Lewis acid vs Lewis base?",
+      "answer": "Lewis acid: Electron pair acceptor. Lewis base: Electron pair donor. This is a broader definition than Brønsted-Lowry.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 50,
+      "category": "chem",
+      "subcategory": "Nuclear Chemistry",
+      "question": "What are alpha, beta, and gamma radiation?",
+      "answer": "Alpha (α): Helium nucleus (2p, 2n), low penetration. Beta (β): Electron or positron, medium penetration. Gamma (γ): High-energy photon, high penetration.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 51,
+      "category": "physics",
+      "subcategory": "Mechanics",
+      "question": "What are Newton's three laws of motion?",
+      "answer": "1st: Object at rest stays at rest (inertia). 2nd: F = ma. 3rd: Every action has an equal and opposite reaction.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 52,
+      "category": "physics",
+      "subcategory": "Mechanics",
+      "question": "What is the relationship between kinetic and potential energy?",
+      "answer": "KE = ½mv². PE = mgh (gravitational). In a closed system, total mechanical energy is conserved: KE + PE = constant.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 53,
+      "category": "physics",
+      "subcategory": "Mechanics",
+      "question": "What is momentum and when is it conserved?",
+      "answer": "p = mv. Momentum is conserved in isolated systems (no external forces). In collisions: m1v1 + m2v2 = m1v1' + m2v2'.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 54,
+      "category": "physics",
+      "subcategory": "Mechanics",
+      "question": "What is the difference between elastic and inelastic collisions?",
+      "answer": "Elastic: Both momentum AND kinetic energy conserved. Inelastic: Only momentum conserved, KE lost. Perfectly inelastic: Objects stick together.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 55,
+      "category": "physics",
+      "subcategory": "Fluids",
+      "question": "What is Bernoulli's equation?",
+      "answer": "P + ½ρv² + ρgh = constant. As fluid velocity increases, pressure decreases. Explains airplane lift, blood flow, and venturi effect.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 56,
+      "category": "physics",
+      "subcategory": "Fluids",
+      "question": "What is Pascal's principle?",
+      "answer": "Pressure applied to an enclosed fluid is transmitted equally in all directions. This is the basis for hydraulic systems: F1/A1 = F2/A2.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 57,
+      "category": "physics",
+      "subcategory": "Fluids",
+      "question": "What determines if an object floats or sinks?",
+      "answer": "Buoyant force = ρ(fluid) × V(displaced) × g. Object floats if its density is less than the fluid's density. At equilibrium, buoyant force equals weight.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 58,
+      "category": "physics",
+      "subcategory": "Electricity",
+      "question": "What is Ohm's law?",
+      "answer": "V = IR. Voltage (V) equals current (I) times resistance (R). Current flows from high to low potential.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 59,
+      "category": "physics",
+      "subcategory": "Electricity",
+      "question": "How do resistors combine in series vs parallel?",
+      "answer": "Series: R(total) = R1 + R2 + R3... (add directly). Parallel: 1/R(total) = 1/R1 + 1/R2 + 1/R3... (add reciprocals).",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 60,
+      "category": "physics",
+      "subcategory": "Electricity",
+      "question": "What is the equation for electric force between two charges?",
+      "answer": "Coulomb's Law: F = kq1q2/r². k = 9×10⁹ N·m²/C². Like charges repel, opposite charges attract.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 61,
+      "category": "physics",
+      "subcategory": "Electricity",
+      "question": "What is capacitance and how do capacitors combine?",
+      "answer": "C = Q/V (charge stored per volt). Series: 1/C(total) = 1/C1 + 1/C2. Parallel: C(total) = C1 + C2 (opposite of resistors!).",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 62,
+      "category": "physics",
+      "subcategory": "Waves",
+      "question": "What is the relationship between frequency, wavelength, and velocity of a wave?",
+      "answer": "v = fλ. Velocity equals frequency times wavelength. For electromagnetic waves in vacuum, v = c = 3×10⁸ m/s.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 63,
+      "category": "physics",
+      "subcategory": "Waves",
+      "question": "What is the Doppler effect?",
+      "answer": "Apparent change in frequency due to relative motion. Approaching source: higher frequency (blue shift). Receding source: lower frequency (red shift).",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 64,
+      "category": "physics",
+      "subcategory": "Optics",
+      "question": "What is Snell's law?",
+      "answer": "n1sinθ1 = n2sinθ2. Light bends toward normal when entering a denser medium (higher n). Total internal reflection occurs when θ > critical angle.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 65,
+      "category": "physics",
+      "subcategory": "Optics",
+      "question": "What is the thin lens equation?",
+      "answer": "1/f = 1/do + 1/di. f = focal length, do = object distance, di = image distance. Positive f for converging, negative for diverging lenses.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 66,
+      "category": "physics",
+      "subcategory": "Optics",
+      "question": "What is the difference between myopia and hyperopia?",
+      "answer": "Myopia (nearsightedness): Image focuses in front of retina, corrected with diverging (concave) lens. Hyperopia (farsightedness): Image focuses behind retina, corrected with converging (convex) lens.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 67,
+      "category": "physics",
+      "subcategory": "Magnetism",
+      "question": "What is the right-hand rule for magnetic force?",
+      "answer": "Point fingers in direction of velocity (v), curl toward magnetic field (B), thumb points in direction of force (F) on positive charge. F = qvB sinθ.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 68,
+      "category": "physics",
+      "subcategory": "Thermodynamics",
+      "question": "What are the laws of thermodynamics?",
+      "answer": "0th: Thermal equilibrium is transitive. 1st: Energy conservation (ΔU = Q - W). 2nd: Entropy of isolated system always increases. 3rd: Cannot reach absolute zero.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 69,
+      "category": "physics",
+      "subcategory": "Thermodynamics",
+      "question": "What is specific heat capacity?",
+      "answer": "Q = mcΔT. The amount of heat needed to raise 1 kg of substance by 1 K. Water has high specific heat (4.18 J/g·K).",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 70,
+      "category": "physics",
+      "subcategory": "Sound",
+      "question": "What determines the pitch and loudness of sound?",
+      "answer": "Pitch: determined by frequency (Hz). Loudness: determined by amplitude/intensity (measured in decibels, dB). dB = 10log(I/I0).",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 71,
+      "category": "physics",
+      "subcategory": "Atomic Physics",
+      "question": "What is the photoelectric effect?",
+      "answer": "Light ejects electrons from metal surface. KEmax = hf - φ (work function). Demonstrates particle nature of light. Threshold frequency required.",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 72,
+      "category": "physics",
+      "subcategory": "Mechanics",
+      "question": "What is torque and when is a system in rotational equilibrium?",
+      "answer": "τ = rFsinθ (force times lever arm). Rotational equilibrium when Στ = 0. Torque causes angular acceleration: τ = Iα.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 73,
+      "category": "physics",
+      "subcategory": "Mechanics",
+      "question": "What are the kinematic equations for constant acceleration?",
+      "answer": "v = v0 + at; x = x0 + v0t + ½at²; v² = v0² + 2a(x-x0); x = x0 + ½(v0+v)t. Use when acceleration is constant.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 74,
+      "category": "physics",
+      "subcategory": "Work and Energy",
+      "question": "What is the work-energy theorem?",
+      "answer": "W(net) = ΔKE = ½mv² - ½mv0². Net work done on object equals change in kinetic energy.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 75,
+      "category": "physics",
+      "subcategory": "Circular Motion",
+      "question": "What is centripetal acceleration?",
+      "answer": "ac = v²/r = ω²r. Always points toward center. Centripetal force: Fc = mac = mv²/r. Not a separate force—it's provided by tension, gravity, friction, etc.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 76,
+      "category": "psych_soc",
+      "subcategory": "Learning",
+      "question": "What is the difference between classical and operant conditioning?",
+      "answer": "Classical: Learning through association (Pavlov's dog). Operant: Learning through consequences—reinforcement increases behavior, punishment decreases it (Skinner).",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 77,
+      "category": "psych_soc",
+      "subcategory": "Learning",
+      "question": "What are the types of reinforcement and punishment?",
+      "answer": "Positive reinforcement: Add pleasant stimulus. Negative reinforcement: Remove unpleasant stimulus. Positive punishment: Add unpleasant stimulus. Negative punishment: Remove pleasant stimulus.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 78,
+      "category": "psych_soc",
+      "subcategory": "Memory",
+      "question": "What are the three stages of memory?",
+      "answer": "Sensory memory (brief, <1 sec). Short-term/Working memory (20-30 sec, 7±2 items). Long-term memory (unlimited capacity, permanent storage).",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 79,
+      "category": "psych_soc",
+      "subcategory": "Memory",
+      "question": "What is the difference between explicit and implicit memory?",
+      "answer": "Explicit (declarative): Conscious recall—episodic (events) and semantic (facts). Implicit (non-declarative): Unconscious—procedural skills, priming, conditioning.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 80,
+      "category": "psych_soc",
+      "subcategory": "Memory",
+      "question": "What brain structure is crucial for forming new explicit memories?",
+      "answer": "Hippocampus. Damage causes anterograde amnesia (can't form new memories). Part of the limbic system.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 81,
+      "category": "psych_soc",
+      "subcategory": "Development",
+      "question": "What are Piaget's stages of cognitive development?",
+      "answer": "Sensorimotor (0-2): Object permanence. Preoperational (2-7): Egocentrism, lack of conservation. Concrete operational (7-11): Logical thought. Formal operational (12+): Abstract thinking.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 82,
+      "category": "psych_soc",
+      "subcategory": "Development",
+      "question": "What are Erikson's stages of psychosocial development?",
+      "answer": "Trust vs Mistrust (infant), Autonomy vs Shame (toddler), Initiative vs Guilt (preschool), Industry vs Inferiority (school age), Identity vs Role Confusion (adolescent), Intimacy vs Isolation (young adult), Generativity vs Stagnation (middle adult), Integrity vs Despair (late adult).",
+      "difficulty": "hard",
+      "high_yield": true
+    },
+    {
+      "id": 83,
+      "category": "psych_soc",
+      "subcategory": "Development",
+      "question": "What are Kohlberg's stages of moral development?",
+      "answer": "Pre-conventional: Self-interest, avoid punishment. Conventional: Social norms, law and order. Post-conventional: Social contract, universal ethical principles.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 84,
+      "category": "psych_soc",
+      "subcategory": "Social Psychology",
+      "question": "What is the fundamental attribution error?",
+      "answer": "Tendency to overestimate dispositional (personality) factors and underestimate situational factors when explaining others' behavior.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 85,
+      "category": "psych_soc",
+      "subcategory": "Social Psychology",
+      "question": "What is cognitive dissonance?",
+      "answer": "Mental discomfort from holding contradictory beliefs or behaving inconsistently with beliefs. People reduce it by changing beliefs, behaviors, or rationalizing.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 86,
+      "category": "psych_soc",
+      "subcategory": "Social Psychology",
+      "question": "What is the bystander effect?",
+      "answer": "People are less likely to help when others are present. Caused by diffusion of responsibility and pluralistic ignorance.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 87,
+      "category": "psych_soc",
+      "subcategory": "Social Psychology",
+      "question": "What is conformity and what affects it?",
+      "answer": "Adjusting behavior to match group norms. Increased by: group size (to a point), unanimity, high status members, public response. Asch's line experiments.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 88,
+      "category": "psych_soc",
+      "subcategory": "Social Psychology",
+      "question": "What is the difference between prejudice, discrimination, and stereotypes?",
+      "answer": "Prejudice: Negative attitude toward a group. Discrimination: Negative behavior toward a group. Stereotype: Generalized belief about a group (can be positive or negative).",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 89,
+      "category": "psych_soc",
+      "subcategory": "Neuroscience",
+      "question": "What are the functions of the frontal lobe?",
+      "answer": "Executive functions, decision-making, planning, personality, motor control. Prefrontal cortex: impulse control, working memory. Broca's area: speech production.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 90,
+      "category": "psych_soc",
+      "subcategory": "Neuroscience",
+      "question": "What neurotransmitter is associated with reward and pleasure?",
+      "answer": "Dopamine. Involved in motivation, reward, addiction, and movement (deficiency causes Parkinson's). Released in the mesolimbic pathway.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 91,
+      "category": "psych_soc",
+      "subcategory": "Neuroscience",
+      "question": "What is the role of the amygdala?",
+      "answer": "Processing emotions, especially fear and aggression. Part of the limbic system. Involved in emotional memory and fight-or-flight response.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 92,
+      "category": "psych_soc",
+      "subcategory": "Sociology",
+      "question": "What is the difference between achieved and ascribed status?",
+      "answer": "Achieved status: Earned through effort (doctor, college graduate). Ascribed status: Assigned at birth, not chosen (race, sex, family background).",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 93,
+      "category": "psych_soc",
+      "subcategory": "Sociology",
+      "question": "What are the agents of socialization?",
+      "answer": "Family (primary), peers, school, media, religion, workplace. These teach norms, values, and behaviors expected in society.",
+      "difficulty": "easy",
+      "high_yield": true
+    },
+    {
+      "id": 94,
+      "category": "psych_soc",
+      "subcategory": "Sociology",
+      "question": "What is symbolic interactionism?",
+      "answer": "Micro-level theory: Society is constructed through everyday interactions. People act based on meanings they assign to symbols (language, gestures).",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 95,
+      "category": "psych_soc",
+      "subcategory": "Sociology",
+      "question": "What is functionalism in sociology?",
+      "answer": "Macro-level theory: Society is a system of interconnected parts that work together to maintain stability. Each institution serves a function (Durkheim).",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 96,
+      "category": "psych_soc",
+      "subcategory": "Sociology",
+      "question": "What is conflict theory?",
+      "answer": "Macro-level theory: Society is characterized by inequality and conflict over resources. Those in power exploit others (Marx). Focus on class, race, gender inequalities.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 97,
+      "category": "psych_soc",
+      "subcategory": "Disorders",
+      "question": "What is the difference between positive and negative symptoms in schizophrenia?",
+      "answer": "Positive: Added symptoms (hallucinations, delusions, disorganized speech). Negative: Reduced symptoms (flat affect, social withdrawal, lack of motivation).",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 98,
+      "category": "psych_soc",
+      "subcategory": "Disorders",
+      "question": "What characterizes major depressive disorder?",
+      "answer": "Persistent depressed mood, loss of interest (anhedonia), sleep/appetite changes, fatigue, worthlessness, concentration problems. Must last ≥2 weeks.",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 99,
+      "category": "psych_soc",
+      "subcategory": "Health Psychology",
+      "question": "What is the general adaptation syndrome (GAS)?",
+      "answer": "Selye's stress response model: 1) Alarm (fight-or-flight activation), 2) Resistance (adaptation to stressor), 3) Exhaustion (resources depleted, vulnerability to illness).",
+      "difficulty": "medium",
+      "high_yield": true
+    },
+    {
+      "id": 100,
+      "category": "psych_soc",
+      "subcategory": "Research Methods",
+      "question": "What is the difference between validity and reliability?",
+      "answer": "Validity: Test measures what it claims to measure (accuracy). Reliability: Test produces consistent results (precision). A test can be reliable but not valid.",
+      "difficulty": "medium",
+      "high_yield": true
+    }
+  ]
+}
