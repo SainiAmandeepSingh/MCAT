@@ -4,7 +4,12 @@
       "WebFetch(domain:opentdb.com)",
       "Bash(pip install:*)",
       "Bash(streamlit run:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(dir:*)",
+      "Bash(python -m py_compile:*)",
+      "Bash(ping:*)",
+      "Bash(taskkill:*)",
+      "Bash(python -c:*)"
     ]
   }
 }

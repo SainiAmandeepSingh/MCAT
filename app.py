@@ -43,7 +43,7 @@ def init_session_state():
         'score': {'correct': 0, 'incorrect': 0},
         'selected_category': 'all',
         'filtered_cards': [],
-        'dark_mode': False,
+        'dark_mode': True,  # Dark mode always enabled
         'quiz_active': False,
         'quiz_questions': [],
         'quiz_current': 0,
@@ -55,6 +55,7 @@ def init_session_state():
         'bookmarked_cards': set(),
         'study_streak': 0,
         'last_study_date': None,
+        'show_welcome_popup': False,  # For dedication popup
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -100,20 +101,41 @@ def save_srs_data(data):
     with open(SRS_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2)
 
+def reset_all_progress():
+    """Reset all user progress data"""
+    empty_progress = {'daily_scores': [], 'total_studied': 0, 'streak': 0, 'last_study_date': None}
+    empty_srs = {'cards': {}}
+    save_progress(empty_progress)
+    save_srs_data(empty_srs)
+    st.session_state.score = {'correct': 0, 'incorrect': 0}
+    st.session_state.study_streak = 0
+    st.session_state.bookmarked_cards = set()
+    st.session_state.current_card_index = 0
+
 # ============================================
-# TRIVIA API FUNCTIONS
+# ENHANCED MCAT QUESTION API FUNCTIONS
 # ============================================
 @st.cache_data(ttl=300)
-def fetch_trivia_questions(amount: int = 10, category: int = 17) -> List[Dict]:
-    """Fetch science questions from Open Trivia DB"""
+def fetch_mcat_questions(amount: int = 10, category: str = "all") -> List[Dict]:
+    """Fetch MCAT-relevant questions from multiple sources"""
+    questions = []
+
+    # OpenTDB categories relevant to MCAT
+    mcat_categories = {
+        'biology': 17,      # Science & Nature
+        'chemistry': 17,    # Science & Nature
+        'physics': 17,      # Science & Nature
+        'psychology': 17,   # Science & Nature (closest match)
+    }
+
+    # Try Open Trivia DB first
     try:
         response = requests.get(
-            f"https://opentdb.com/api.php?amount={amount}&category={category}&type=multiple",
+            f"https://opentdb.com/api.php?amount={amount}&category=17&type=multiple",
             timeout=10
         )
         data = response.json()
         if data.get("response_code") == 0:
-            questions = []
             for q in data.get("results", []):
                 answers = [html.unescape(q["correct_answer"])] + [html.unescape(a) for a in q["incorrect_answers"]]
                 random.shuffle(answers)
@@ -122,44 +144,98 @@ def fetch_trivia_questions(amount: int = 10, category: int = 17) -> List[Dict]:
                     "correct_answer": html.unescape(q["correct_answer"]),
                     "options": answers,
                     "difficulty": q["difficulty"],
-                    "category": html.unescape(q["category"])
+                    "category": "Science",
+                    "source": "OpenTDB"
                 })
-            return questions
-    except Exception as e:
-        st.error(f"Could not fetch questions: {e}")
-    return []
+    except Exception:
+        pass
+
+    # Try The Trivia API as backup
+    try:
+        response = requests.get(
+            f"https://the-trivia-api.com/v2/questions?limit={amount}&categories=science",
+            timeout=10
+        )
+        if response.status_code == 200:
+            data = response.json()
+            for q in data:
+                answers = [q.get("correctAnswer", "")] + q.get("incorrectAnswers", [])
+                random.shuffle(answers)
+                # Handle question being either a string or an object with 'text' field
+                question_data = q.get("question", "")
+                if isinstance(question_data, dict):
+                    question_text = question_data.get("text", "")
+                else:
+                    question_text = str(question_data)
+
+                if question_text and q.get("correctAnswer"):
+                    questions.append({
+                        "question": question_text,
+                        "correct_answer": q.get("correctAnswer", ""),
+                        "options": answers,
+                        "difficulty": q.get("difficulty", "medium"),
+                        "category": q.get("category", "Science"),
+                        "source": "TriviaAPI"
+                    })
+    except Exception:
+        pass
+
+    # Shuffle and return requested amount
+    random.shuffle(questions)
+    return questions[:amount] if questions else []
 
 # ============================================
-# CUSTOM CSS - Beautiful Modern Design
+# MCAT STUDY RESOURCES
+# ============================================
+MCAT_RESOURCES = {
+    "Official AAMC": [
+        {"name": "AAMC MCAT Official Prep", "url": "https://students-residents.aamc.org/prepare-mcat-exam/prepare-mcat-exam", "desc": "Official practice exams and materials"},
+        {"name": "AAMC Practice Exams", "url": "https://students-residents.aamc.org/mcat-scores-and-score-reporting/using-mcat-scores", "desc": "Understanding MCAT scoring"},
+    ],
+    "Free Resources": [
+        {"name": "Khan Academy MCAT", "url": "https://www.khanacademy.org/test-prep/mcat", "desc": "Free comprehensive MCAT prep videos"},
+        {"name": "Jack Westin CARS", "url": "https://jackwestin.com/", "desc": "Free daily CARS passages"},
+        {"name": "MCAT Reddit", "url": "https://www.reddit.com/r/Mcat/", "desc": "Community tips and study schedules"},
+    ],
+    "Biology/Biochemistry": [
+        {"name": "Ninja Nerd Biology", "url": "https://www.youtube.com/c/NinjaNerdScience", "desc": "Excellent biology & biochem videos"},
+        {"name": "AK Lectures", "url": "https://www.youtube.com/c/AKLECTURES", "desc": "Biochemistry deep dives"},
+    ],
+    "Chemistry": [
+        {"name": "Organic Chemistry Tutor", "url": "https://www.youtube.com/c/TheOrganicChemistryTutor", "desc": "Gen Chem & Organic Chemistry"},
+        {"name": "Professor Dave Explains", "url": "https://www.youtube.com/c/ProfessorDaveExplains", "desc": "Chemistry concepts explained simply"},
+    ],
+    "Physics": [
+        {"name": "Physics Classroom", "url": "https://www.physicsclassroom.com/", "desc": "Physics concepts and practice"},
+        {"name": "Organic Chemistry Tutor Physics", "url": "https://www.youtube.com/playlist?list=PL0o_zxa4K1BWYThyV4T2Allw6zY0jEumv", "desc": "Physics problem solving"},
+    ],
+    "Psychology/Sociology": [
+        {"name": "Khan Academy P/S", "url": "https://www.khanacademy.org/test-prep/mcat/social-sciences-practice", "desc": "Psych/Soc foundations"},
+        {"name": "300 Page P/S Doc", "url": "https://www.reddit.com/r/Mcat/comments/64um9s/the_mcat_psych_soc_bible_the_lazy_ocd_approach/", "desc": "Community favorite P/S document"},
+    ],
+    "Practice Questions": [
+        {"name": "UWorld", "url": "https://www.uworld.com/mcat/", "desc": "High-quality practice questions (paid)"},
+        {"name": "Blueprint (Next Step)", "url": "https://blueprintprep.com/mcat", "desc": "Practice exams and questions"},
+        {"name": "Kaplan", "url": "https://www.kaptest.com/mcat", "desc": "MCAT prep courses and books"},
+    ],
+}
+
+# ============================================
+# CUSTOM CSS - Beautiful Modern Design (Dark Mode Only)
 # ============================================
 def load_css():
     """Load custom CSS for beautiful styling"""
-    dark_mode = st.session_state.get('dark_mode', False)
-
-    if dark_mode:
-        bg_primary = "#1a1a2e"
-        bg_secondary = "#16213e"
-        bg_card = "#1f2937"
-        text_primary = "#ffffff"
-        text_secondary = "#a0aec0"
-        accent = "#8b5cf6"
-        accent_light = "#a78bfa"
-        success = "#10b981"
-        danger = "#ef4444"
-        warning = "#f59e0b"
-        border_color = "#374151"
-    else:
-        bg_primary = "#f8fafc"
-        bg_secondary = "#ffffff"
-        bg_card = "#ffffff"
-        text_primary = "#1e293b"
-        text_secondary = "#64748b"
-        accent = "#8b5cf6"
-        accent_light = "#a78bfa"
-        success = "#10b981"
-        danger = "#ef4444"
-        warning = "#f59e0b"
-        border_color = "#e2e8f0"
+    bg_primary = "#1a1a2e"
+    bg_secondary = "#16213e"
+    bg_card = "#1f2937"
+    text_primary = "#ffffff"
+    text_secondary = "#a0aec0"
+    accent = "#8b5cf6"
+    accent_light = "#a78bfa"
+    success = "#10b981"
+    danger = "#ef4444"
+    warning = "#f59e0b"
+    border_color = "#374151"
 
     st.markdown(f"""
     <style>
@@ -190,38 +266,55 @@ def load_css():
         border-radius: 4px;
     }}
 
-    /* Login Container */
-    .login-container {{
-        max-width: 450px;
-        margin: 0 auto;
-        padding: 3rem;
-        background: {bg_card};
-        border-radius: 24px;
-        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-        border: 1px solid {border_color};
+    /* Form Input Styling */
+    .stTextInput > div > div > input {{
+        background: {bg_secondary} !important;
+        border: 2px solid {border_color} !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 1rem !important;
+        color: {text_primary} !important;
+        font-size: 1rem !important;
     }}
 
-    .login-header {{
-        text-align: center;
-        margin-bottom: 2rem;
+    .stTextInput > div > div > input:focus {{
+        border-color: {accent} !important;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2) !important;
     }}
 
-    .login-logo {{
-        font-size: 4rem;
-        margin-bottom: 1rem;
+    .stTextInput > div > div > input::placeholder {{
+        color: {text_secondary} !important;
+        opacity: 0.7 !important;
     }}
 
-    .login-title {{
-        font-family: 'Poppins', sans-serif;
-        font-size: 2rem;
-        font-weight: 700;
-        color: {text_primary};
-        margin-bottom: 0.5rem;
+    /* Primary Button Styling */
+    .stButton > button[kind="primary"] {{
+        background: linear-gradient(135deg, {accent} 0%, #7c3aed 100%) !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 1.5rem !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
     }}
 
-    .login-subtitle {{
-        color: {text_secondary};
-        font-size: 1rem;
+    .stButton > button[kind="primary"]:hover {{
+        transform: translateY(-2px) !important;
+        box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3) !important;
+    }}
+
+    /* Regular Button Styling */
+    .stButton > button {{
+        background: {bg_card} !important;
+        border: 2px solid {border_color} !important;
+        border-radius: 12px !important;
+        color: {text_primary} !important;
+        padding: 0.75rem 1.5rem !important;
+        font-weight: 500 !important;
+        transition: all 0.3s ease !important;
+    }}
+
+    .stButton > button:hover {{
+        border-color: {accent} !important;
+        transform: translateY(-2px) !important;
     }}
 
     /* Main Header */
@@ -294,43 +387,7 @@ def load_css():
         border-color: {accent};
     }}
 
-    .nav-card-icon {{
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }}
-
-    .nav-card-title {{
-        font-family: 'Poppins', sans-serif;
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: {text_primary};
-        margin-bottom: 0.5rem;
-    }}
-
-    .nav-card-desc {{
-        color: {text_secondary};
-        font-size: 0.95rem;
-        line-height: 1.5;
-    }}
-
-    .nav-card-badge {{
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: linear-gradient(135deg, {accent} 0%, #ec4899 100%);
-        color: white;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }}
-
     /* Flashcard Styles */
-    .flashcard-container {{
-        perspective: 1000px;
-        margin: 2rem 0;
-    }}
-
     .flashcard {{
         background: {bg_card};
         border-radius: 24px;
@@ -380,9 +437,6 @@ def load_css():
         border-radius: 20px;
         font-size: 0.75rem;
         font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
     }}
 
     .flashcard-question {{
@@ -396,17 +450,18 @@ def load_css():
     }}
 
     .flashcard-answer {{
-        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        background: linear-gradient(135deg, #1e3a2f 0%, #1a2e26 100%);
         border-radius: 16px;
         padding: 1.5rem 2rem;
         margin-top: 1.5rem;
         max-width: 600px;
         border-left: 4px solid {success};
+        width: 100%;
     }}
 
     .flashcard-answer-text {{
         font-size: 1.1rem;
-        color: #065f46;
+        color: #a7f3d0;
         line-height: 1.6;
     }}
 
@@ -451,33 +506,6 @@ def load_css():
         margin-top: 0.5rem;
     }}
 
-    /* Quiz Styles */
-    .quiz-option {{
-        background: {bg_card};
-        border: 2px solid {border_color};
-        border-radius: 12px;
-        padding: 1rem 1.5rem;
-        margin: 0.5rem 0;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        color: {text_primary};
-    }}
-
-    .quiz-option:hover {{
-        border-color: {accent};
-        background: {bg_secondary};
-    }}
-
-    .quiz-option-correct {{
-        border-color: {success} !important;
-        background: rgba(16, 185, 129, 0.1) !important;
-    }}
-
-    .quiz-option-wrong {{
-        border-color: {danger} !important;
-        background: rgba(239, 68, 68, 0.1) !important;
-    }}
-
     /* Progress Bar */
     .progress-container {{
         background: {border_color};
@@ -507,130 +535,162 @@ def load_css():
         border: 3px solid {border_color};
     }}
 
-    .timer-warning {{
-        color: {warning} !important;
-    }}
-
-    .timer-danger {{
-        color: {danger} !important;
-        animation: pulse 1s infinite;
-    }}
+    .timer-warning {{ color: {warning} !important; }}
+    .timer-danger {{ color: {danger} !important; animation: pulse 1s infinite; }}
 
     @keyframes pulse {{
         0%, 100% {{ opacity: 1; }}
         50% {{ opacity: 0.5; }}
     }}
 
-    /* Buttons */
-    .custom-button {{
-        background: linear-gradient(135deg, {accent} 0%, #7c3aed 100%);
-        color: white;
-        border: none;
-        padding: 0.875rem 2rem;
+    /* Resource Cards */
+    .resource-card {{
+        background: {bg_card};
         border-radius: 12px;
-        font-size: 1rem;
+        padding: 1rem 1.25rem;
+        border: 1px solid {border_color};
+        margin-bottom: 0.75rem;
+        transition: all 0.2s ease;
+    }}
+
+    .resource-card:hover {{
+        border-color: {accent};
+        transform: translateX(5px);
+    }}
+
+    .resource-link {{
+        color: {accent_light};
+        text-decoration: none;
         font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
     }}
 
-    .custom-button:hover {{
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
-    }}
-
-    .btn-success {{
-        background: linear-gradient(135deg, {success} 0%, #059669 100%);
-    }}
-
-    .btn-danger {{
-        background: linear-gradient(135deg, {danger} 0%, #dc2626 100%);
-    }}
-
-    /* Streak Display */
-    .streak-badge {{
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 30px;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.9rem;
-    }}
-
-    /* Back Button */
-    .back-button {{
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: {text_secondary};
-        font-weight: 500;
-        cursor: pointer;
-        margin-bottom: 1rem;
-        transition: color 0.2s ease;
-    }}
-
-    .back-button:hover {{
+    .resource-link:hover {{
         color: {accent};
+    }}
+
+    /* Popup/Modal Styling */
+    .popup-overlay {{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }}
+
+    .popup-content {{
+        background: {bg_card};
+        border-radius: 24px;
+        padding: 2.5rem;
+        max-width: 550px;
+        margin: 1rem;
+        border: 2px solid {accent};
+        box-shadow: 0 25px 50px rgba(139, 92, 246, 0.3);
+    }}
+
+    /* Metric Cards */
+    [data-testid="stMetric"] {{
+        background: {bg_card};
+        padding: 1rem;
+        border-radius: 16px;
+        border: 2px solid {border_color};
+        text-align: center;
+    }}
+
+    [data-testid="stMetricLabel"] {{ color: {text_secondary} !important; }}
+    [data-testid="stMetricValue"] {{ color: {accent} !important; font-family: 'Poppins', sans-serif !important; font-weight: 700 !important; }}
+
+    /* Selectbox Styling */
+    .stSelectbox > div > div {{
+        background: {bg_card} !important;
+        border: 2px solid {border_color} !important;
+        border-radius: 12px !important;
+    }}
+
+    .stSelectbox > div > div:hover {{ border-color: {accent} !important; }}
+
+    /* Center alignment for main content */
+    .block-container {{
+        max-width: 1200px !important;
+        padding: 1rem 2rem !important;
+        padding-top: 0.5rem !important;
+    }}
+
+    /* Reduce top padding for login page */
+    .stApp > header + div {{
+        padding-top: 0 !important;
     }}
 
     /* Responsive adjustments */
     @media (max-width: 768px) {{
-        .main-header {{
-            padding: 1.5rem;
-        }}
-        .header-title {{
-            font-size: 1.8rem;
-        }}
-        .flashcard {{
-            padding: 2rem;
-            min-height: 280px;
-        }}
-        .flashcard-question {{
-            font-size: 1.2rem;
-        }}
+        .main-header {{ padding: 1.5rem; }}
+        .header-title {{ font-size: 1.8rem; }}
+        .flashcard {{ padding: 2rem; min-height: 280px; }}
+        .flashcard-question {{ font-size: 1.2rem; }}
+        .block-container {{ padding: 0.5rem !important; }}
     }}
     </style>
     """, unsafe_allow_html=True)
 
 
 # ============================================
-# LOGIN PAGE
+# LOGIN PAGE - Compact, No Scrollbar
 # ============================================
 def login_page():
-    """Beautiful login page with authentication"""
+    """Compact login page that fits without scrolling"""
     load_css()
 
-    st.markdown("""
-    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
-        <div class="login-container">
-            <div class="login-header">
-                <div class="login-logo">🩺</div>
-                <div class="login-title">MCAT Study Hub</div>
-                <div class="login-subtitle">Your personal MCAT preparation companion</div>
+    bg_card = "#1f2937"
+    text_primary = "#ffffff"
+    text_secondary = "#a0aec0"
+    border_color = "#374151"
+
+    # Compact Login Container - balanced padding
+    st.markdown(f"""
+    <div style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        margin-top: 0.5rem;
+    ">
+        <div style="
+            max-width: 400px;
+            width: 100%;
+            padding: 2rem;
+            background: {bg_card};
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid {border_color};
+            text-align: center;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🩺</div>
+            <div style="
+                font-family: 'Poppins', sans-serif;
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: {text_primary};
+                margin-bottom: 0.3rem;
+            ">MCAT Study Hub</div>
+            <div style="color: {text_secondary}; font-size: 0.9rem;">
+                Your personal MCAT preparation companion
             </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
+    # Centered form with minimal spacing
     col1, col2, col3 = st.columns([1, 1.5, 1])
 
     with col2:
-        st.markdown("<br>", unsafe_allow_html=True)
-
         with st.form("login_form", clear_on_submit=False):
-            st.markdown("#### 🔐 Sign In")
-            email = st.text_input("📧 Email", placeholder="Enter your email address")
-            password = st.text_input("🔑 Access Code", type="password", placeholder="Enter your access code")
-
-            col_a, col_b = st.columns(2)
-            with col_a:
-                remember = st.checkbox("Remember me")
+            email = st.text_input("Email", placeholder="Enter your email", label_visibility="collapsed")
+            password = st.text_input("Password", type="password", placeholder="Enter your access code", label_visibility="collapsed")
 
             submit = st.form_submit_button("Sign In →", use_container_width=True, type="primary")
 
@@ -638,20 +698,118 @@ def login_page():
                 if email == "ahkaur77@gmail.com" and password == "IloveyouArsh":
                     st.session_state.authenticated = True
                     st.session_state.current_page = 'home'
-                    # Update streak
+                    st.session_state.show_welcome_popup = True  # Show dedication popup
                     update_streak()
                     st.balloons()
                     st.rerun()
                 else:
                     st.error("❌ Invalid credentials. Please try again.")
 
-        st.markdown("---")
-        st.markdown("""
-        <div style="text-align: center; opacity: 0.7;">
-            <small>Made with 💜 for Arsh's MCAT Journey</small><br>
-            <small>© 2024 MCAT Study Hub</small>
+    # Minimal footer
+    st.markdown(f"""
+    <div style="text-align: center; margin-top: 1rem;">
+        <div style="color: {text_secondary}; font-size: 0.8rem;">
+            Made with 💜 for Arsh
         </div>
-        """, unsafe_allow_html=True)
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# ============================================
+# DEDICATION POPUP (Shows after login)
+# ============================================
+def show_dedication_popup():
+    """Show beautiful dedication popup after login"""
+    text_primary = "#ffffff"
+    text_secondary = "#a0aec0"
+
+    st.markdown(f"""
+    <div style="
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+        border: 2px solid rgba(139, 92, 246, 0.5);
+        border-radius: 24px;
+        padding: 2rem;
+        margin: 1rem auto;
+        max-width: 620px;
+        text-align: center;
+    ">
+        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">💜</div>
+        <div style="
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        ">
+            For My Dearest Arsh
+        </div>
+        <div style="
+            color: {text_secondary};
+            font-size: 0.95rem;
+            line-height: 1.8;
+            font-style: italic;
+            margin-bottom: 1.25rem;
+            text-align: left;
+            padding: 0 0.5rem;
+        ">
+            I know things haven't been easy between us, and I'm truly sorry for the pain I've caused
+            these last few days. I've been working on this for quite some time now to help you study
+            for your MCAT exam later this summer.
+            <br><br>
+            I wanted to bring together all the materials, flashcards, and study tools in one place
+            to help you prepare and keep track of your progress. I know I live far away, but my
+            heart is always with you.
+            <br><br>
+            This isn't just a study tool, it's a reminder of how much I believe in you and your
+            dreams. You're going to absolutely crush the MCAT, and I'll always be cheering for you
+            from wherever I am.
+            <br><br>
+            <div style="text-align: center;">
+                <span style="color: #8b5cf6; font-weight: 600;">With all my love and apologies,</span>
+                <br>
+                <span style="color: #ec4899; font-weight: 700; font-size: 1.05rem;">Forever Your Bestie (Aman) 💜</span>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("💜 Let's Study Together!", use_container_width=True, type="primary"):
+            st.session_state.show_welcome_popup = False
+            st.rerun()
+
+
+# ============================================
+# LOVE FOOTER COMPONENT
+# ============================================
+def render_love_footer(message: str = "I believe in you. I'm sorry and I love you."):
+    """Render a beautiful love footer with custom message"""
+    text_secondary = "#a0aec0"
+
+    st.markdown("---")
+    st.markdown(f"""
+    <div style="
+        max-width: 550px;
+        margin: 1rem auto 2rem auto;
+        padding: 1.25rem 1.5rem;
+        text-align: center;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+        border-radius: 16px;
+        border: 1px solid rgba(139, 92, 246, 0.2);
+    ">
+        <div style="font-size: 1.25rem; margin-bottom: 0.4rem;">💜</div>
+        <div style="color: {text_secondary}; font-size: 0.9rem; line-height: 1.5;">
+            {message}
+        </div>
+        <div style="color: #ec4899; font-size: 0.8rem; margin-top: 0.4rem; font-style: italic;">
+            With love for you, Arsh 💜
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # ============================================
@@ -671,7 +829,6 @@ def update_streak():
             progress['streak'] = progress.get('streak', 0) + 1
         elif diff > 1:
             progress['streak'] = 1
-        # If diff == 0, keep current streak
     else:
         progress['streak'] = 1
 
@@ -685,6 +842,11 @@ def update_streak():
 # ============================================
 def home_page():
     """Main dashboard with navigation"""
+    # Check for welcome popup
+    if st.session_state.get('show_welcome_popup', False):
+        show_dedication_popup()
+        return
+
     data = load_flashcards()
     progress = load_progress()
 
@@ -744,7 +906,7 @@ def home_page():
             st.rerun()
 
     with col2:
-        if st.button("🧪 **Quiz Mode**\n\nTest yourself with science questions from online",
+        if st.button("🧪 **Quiz Mode**\n\nTest yourself with science questions",
                     use_container_width=True, key="nav_quiz"):
             st.session_state.current_page = 'quiz'
             st.rerun()
@@ -763,41 +925,25 @@ def home_page():
             st.session_state.current_page = 'progress'
             st.rerun()
 
-    # Quick Actions
-    st.markdown("---")
-    st.markdown("### ⚡ Quick Actions")
+    # New: Study Resources Button
+    col5, col6 = st.columns(2)
+    with col5:
+        if st.button("📚 **Study Resources**\n\nCurated MCAT prep materials & links",
+                    use_container_width=True, key="nav_resources"):
+            st.session_state.current_page = 'resources'
+            st.rerun()
 
-    col_a, col_b, col_c = st.columns(3)
-
-    with col_a:
-        if st.button("🔀 Random Card", use_container_width=True):
+    with col6:
+        if st.button("🔀 **Random Card**\n\nJump into a random flashcard",
+                    use_container_width=True, key="nav_random"):
             st.session_state.current_page = 'flashcards'
             st.session_state.current_card_index = random.randint(0, len(data.get('flashcards', [])) - 1)
             st.rerun()
 
-    with col_b:
-        if st.button("📝 Review Weak Cards", use_container_width=True):
-            st.session_state.current_page = 'flashcards'
-            st.session_state.selected_category = 'all'
-            st.rerun()
+    # Love Footer
+    render_love_footer("You've got this, Arsh! One step at a time. I believe in you more than words can say.")
 
-    with col_c:
-        dark_label = "☀️ Light Mode" if st.session_state.dark_mode else "🌙 Dark Mode"
-        if st.button(dark_label, use_container_width=True):
-            st.session_state.dark_mode = not st.session_state.dark_mode
-            st.rerun()
-
-    # Footer
-    st.markdown("---")
-    col_l, col_m, col_r = st.columns([1, 2, 1])
-    with col_m:
-        st.markdown("""
-        <div style="text-align: center; opacity: 0.6; padding: 1rem;">
-            <p>💜 You've got this, Arsh! One step at a time. 💜</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-    # Logout in sidebar
+    # Sidebar with logout and reset
     with st.sidebar:
         st.markdown("### 🏠 Navigation")
         if st.button("🏠 Home", use_container_width=True):
@@ -807,12 +953,71 @@ def home_page():
         st.markdown("---")
 
         if st.button("🚪 Logout", use_container_width=True):
-            # Save current session before logout
             save_session_progress()
             st.session_state.authenticated = False
             st.session_state.current_page = 'home'
             st.session_state.score = {'correct': 0, 'incorrect': 0}
             st.rerun()
+
+        st.markdown("---")
+        st.markdown("### ⚠️ Danger Zone")
+
+        if st.button("🔄 Reset All Progress", use_container_width=True):
+            st.session_state.confirm_reset = True
+
+        if st.session_state.get('confirm_reset', False):
+            st.warning("Are you sure? This will delete ALL your progress!")
+            col_a, col_b = st.columns(2)
+            with col_a:
+                if st.button("✅ Yes, Reset", use_container_width=True):
+                    reset_all_progress()
+                    st.session_state.confirm_reset = False
+                    st.success("Progress reset!")
+                    st.rerun()
+            with col_b:
+                if st.button("❌ Cancel", use_container_width=True):
+                    st.session_state.confirm_reset = False
+                    st.rerun()
+
+
+# ============================================
+# STUDY RESOURCES PAGE
+# ============================================
+def resources_page():
+    """Curated MCAT study resources and links"""
+    if st.button("← Back to Home"):
+        st.session_state.current_page = 'home'
+        st.rerun()
+
+    st.markdown("""
+    <div class="main-header" style="padding: 1.5rem 2rem;">
+        <div class="header-content">
+            <div class="header-title" style="font-size: 2rem;">📚 Study Resources</div>
+            <div class="header-subtitle">Curated MCAT prep materials to help you succeed</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    text_secondary = "#a0aec0"
+
+    for category, resources in MCAT_RESOURCES.items():
+        st.markdown(f"### {category}")
+
+        for resource in resources:
+            st.markdown(f"""
+            <div class="resource-card">
+                <a href="{resource['url']}" target="_blank" class="resource-link">
+                    🔗 {resource['name']}
+                </a>
+                <div style="color: {text_secondary}; font-size: 0.85rem; margin-top: 0.25rem;">
+                    {resource['desc']}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("")
+
+    render_love_footer("Use these resources wisely! You're going to do amazing. 📖")
 
 
 # ============================================
@@ -822,7 +1027,6 @@ def flashcard_page():
     """Interactive flashcard study page"""
     data = load_flashcards()
 
-    # Back button
     if st.button("← Back to Home"):
         st.session_state.current_page = 'home'
         st.rerun()
@@ -836,7 +1040,6 @@ def flashcard_page():
     </div>
     """, unsafe_allow_html=True)
 
-    # Category filter
     categories = data.get('categories', [])
     flashcards = data.get('flashcards', [])
 
@@ -853,7 +1056,6 @@ def flashcard_page():
         )
         st.session_state.selected_category = category_options[selected_idx]
 
-    # Filter cards
     if st.session_state.selected_category == 'all':
         filtered_cards = flashcards
     else:
@@ -865,14 +1067,12 @@ def flashcard_page():
 
     st.session_state.filtered_cards = filtered_cards
 
-    # Ensure valid index
     if st.session_state.current_card_index >= len(filtered_cards):
         st.session_state.current_card_index = 0
 
     current_card = filtered_cards[st.session_state.current_card_index]
     cat_info = next((c for c in categories if c['id'] == current_card['category']), None)
 
-    # Progress
     progress_pct = (st.session_state.current_card_index + 1) / len(filtered_cards)
     st.markdown(f"""
     <div style="margin: 1rem 0;">
@@ -886,7 +1086,6 @@ def flashcard_page():
     </div>
     """, unsafe_allow_html=True)
 
-    # Flashcard
     badge_class = {
         'bio_biochem': 'badge-bio',
         'chem': 'badge-chem',
@@ -912,7 +1111,6 @@ def flashcard_page():
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Show/Hide Answer
         if st.button("🔍 Show Answer" if not st.session_state.show_answer else "🙈 Hide Answer",
                     use_container_width=True, type="primary"):
             st.session_state.show_answer = not st.session_state.show_answer
@@ -930,7 +1128,6 @@ def flashcard_page():
 
             st.markdown("<br>", unsafe_allow_html=True)
 
-            # Feedback buttons
             col_a, col_b = st.columns(2)
             with col_a:
                 if st.button("✅ I knew it!", use_container_width=True, type="primary"):
@@ -943,7 +1140,6 @@ def flashcard_page():
                     record_card_review(current_card['id'], False)
                     next_card(filtered_cards)
 
-    # Navigation
     st.markdown("---")
     col1, col2, col3, col4 = st.columns(4)
 
@@ -976,7 +1172,6 @@ def flashcard_page():
             st.session_state.show_answer = False
             st.rerun()
 
-    # Session stats
     st.markdown("---")
     st.markdown("### 📊 Session Stats")
 
@@ -992,6 +1187,8 @@ def flashcard_page():
         st.metric("📚 Total", total)
     with col4:
         st.metric("🎯 Accuracy", f"{accuracy:.0f}%")
+
+    render_love_footer("Every card you master brings you closer to your dream. Keep going! 💪")
 
 
 def next_card(filtered_cards):
@@ -1036,7 +1233,7 @@ def record_card_review(card_id: int, correct: bool):
 # QUIZ MODE PAGE
 # ============================================
 def quiz_page():
-    """Quiz mode with trivia API questions"""
+    """Quiz mode with enhanced API questions"""
 
     if st.button("← Back to Home"):
         st.session_state.current_page = 'home'
@@ -1053,20 +1250,19 @@ def quiz_page():
     """, unsafe_allow_html=True)
 
     if not st.session_state.quiz_active:
-        # Quiz setup
         st.markdown("### ⚙️ Quiz Settings")
 
         col1, col2 = st.columns(2)
         with col1:
-            num_questions = st.slider("Number of Questions", 5, 20, 10)
+            num_questions = st.slider("Number of Questions", 5, 50, 10)
         with col2:
-            difficulty = st.selectbox("Difficulty", ["Any", "Easy", "Medium", "Hard"])
+            st.info("Questions sourced from multiple trivia APIs")
 
         st.markdown("---")
 
         if st.button("🚀 Start Quiz", use_container_width=True, type="primary"):
-            with st.spinner("Loading questions..."):
-                questions = fetch_trivia_questions(num_questions)
+            with st.spinner("Loading questions from multiple sources..."):
+                questions = fetch_mcat_questions(num_questions)
                 if questions:
                     st.session_state.quiz_questions = questions
                     st.session_state.quiz_active = True
@@ -1077,14 +1273,12 @@ def quiz_page():
                 else:
                     st.error("Could not load questions. Please try again.")
     else:
-        # Active quiz
         questions = st.session_state.quiz_questions
         current_idx = st.session_state.quiz_current
 
         if current_idx < len(questions):
             q = questions[current_idx]
 
-            # Progress
             progress = (current_idx + 1) / len(questions)
             st.markdown(f"""
             <div style="margin-bottom: 1rem;">
@@ -1098,11 +1292,10 @@ def quiz_page():
             </div>
             """, unsafe_allow_html=True)
 
-            # Question
             st.markdown(f"""
             <div class="flashcard" style="min-height: 200px;">
                 <div style="position: absolute; top: 1rem; right: 1rem;">
-                    <span class="category-badge badge-chem">{q['difficulty'].title()}</span>
+                    <span class="category-badge badge-chem">{q.get('difficulty', 'medium').title()}</span>
                 </div>
                 <div class="flashcard-question" style="font-size: 1.3rem;">
                     {q['question']}
@@ -1112,7 +1305,6 @@ def quiz_page():
 
             st.markdown("<br>", unsafe_allow_html=True)
 
-            # Answer options
             for i, option in enumerate(q['options']):
                 if st.button(f"{chr(65+i)}. {option}", use_container_width=True, key=f"opt_{i}"):
                     correct = option == q['correct_answer']
@@ -1133,7 +1325,6 @@ def quiz_page():
                     time.sleep(1)
                     st.rerun()
         else:
-            # Quiz complete
             score = st.session_state.quiz_score
             total = len(questions)
             pct = (score / total) * 100
@@ -1147,7 +1338,6 @@ def quiz_page():
             </div>
             """, unsafe_allow_html=True)
 
-            # Review answers
             with st.expander("📝 Review Answers"):
                 for i, ans in enumerate(st.session_state.quiz_answers):
                     icon = "✅" if ans['is_correct'] else "❌"
@@ -1160,6 +1350,8 @@ def quiz_page():
             if st.button("🔄 Take Another Quiz", use_container_width=True, type="primary"):
                 st.session_state.quiz_active = False
                 st.rerun()
+
+            render_love_footer("You're learning and growing with every question. So proud of you! 🌟")
 
 
 # ============================================
@@ -1204,17 +1396,14 @@ def timed_page():
             st.session_state.score = {'correct': 0, 'incorrect': 0}
             st.rerun()
     else:
-        # Active timed session
         filtered_cards = st.session_state.filtered_cards
 
         if st.session_state.current_card_index < len(filtered_cards):
             current_card = filtered_cards[st.session_state.current_card_index]
 
-            # Timer calculation
             elapsed = (datetime.now() - st.session_state.timer_start).total_seconds()
             remaining = max(0, st.session_state.timer_duration - elapsed)
 
-            # Auto-advance if time's up
             if remaining <= 0:
                 st.session_state.score['incorrect'] += 1
                 st.session_state.current_card_index += 1
@@ -1222,7 +1411,6 @@ def timed_page():
                 st.session_state.show_answer = False
                 st.rerun()
 
-            # Timer display
             timer_class = ""
             if remaining < 10:
                 timer_class = "timer-danger"
@@ -1237,11 +1425,9 @@ def timed_page():
                 </div>
                 """, unsafe_allow_html=True)
 
-            # Progress
             st.markdown(f"**Card {st.session_state.current_card_index + 1} of {len(filtered_cards)}**")
             st.progress((st.session_state.current_card_index + 1) / len(filtered_cards))
 
-            # Card display
             st.markdown(f"""
             <div class="flashcard" style="min-height: 250px;">
                 <div class="flashcard-question">
@@ -1266,16 +1452,13 @@ def timed_page():
                     st.session_state.show_answer = False
                     st.rerun()
 
-            # Reveal answer option
             if st.button("👁️ Peek at Answer", use_container_width=True):
                 st.info(f"**Answer:** {current_card['answer']}")
 
-            # Auto-refresh for timer
             import time
             time.sleep(1)
             st.rerun()
         else:
-            # Session complete
             st.session_state.timer_active = False
             total = st.session_state.score['correct'] + st.session_state.score['incorrect']
             accuracy = (st.session_state.score['correct'] / total * 100) if total > 0 else 0
@@ -1308,6 +1491,8 @@ def timed_page():
                 st.session_state.timer_active = False
                 st.rerun()
 
+            render_love_footer("Practice makes perfect. You handled that pressure like a champ! ⏱️")
+
 
 # ============================================
 # PROGRESS PAGE
@@ -1330,7 +1515,6 @@ def progress_page():
     </div>
     """, unsafe_allow_html=True)
 
-    # Current session stats
     st.markdown("### 📅 Current Session")
 
     total_today = st.session_state.score['correct'] + st.session_state.score['incorrect']
@@ -1348,7 +1532,6 @@ def progress_page():
 
     st.markdown("---")
 
-    # Historical data
     st.markdown("### 📈 Study History")
 
     if progress.get('daily_scores'):
@@ -1360,7 +1543,6 @@ def progress_page():
         df['date'] = pd.to_datetime(df['date'])
         df['accuracy'] = df['correct'] / df['total'] * 100
 
-        # Cards over time
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=df['date'], y=df['total'],
@@ -1378,20 +1560,18 @@ def progress_page():
             title='Daily Study Progress',
             xaxis_title='Date',
             yaxis_title='Cards',
-            template='plotly_white',
+            template='plotly_dark',
             hovermode='x unified'
         )
         st.plotly_chart(fig, use_container_width=True)
 
-        # Accuracy over time
         fig2 = px.bar(df, x='date', y='accuracy',
                      title='Daily Accuracy',
                      color='accuracy',
                      color_continuous_scale='RdYlGn')
-        fig2.update_layout(template='plotly_white')
+        fig2.update_layout(template='plotly_dark')
         st.plotly_chart(fig2, use_container_width=True)
 
-        # Summary stats
         st.markdown("### 📊 Overall Statistics")
         col1, col2, col3, col4 = st.columns(4)
 
@@ -1406,7 +1586,6 @@ def progress_page():
     else:
         st.info("📝 No study history yet. Start studying to track your progress!")
 
-    # Category breakdown
     st.markdown("---")
     st.markdown("### 📚 Category Overview")
 
@@ -1428,6 +1607,32 @@ def progress_page():
             </div>
             """, unsafe_allow_html=True)
 
+    # Reset Progress Section
+    st.markdown("---")
+    st.markdown("### 🔄 Reset Progress")
+    st.warning("Want to start fresh? You can reset all your progress and study again from the beginning.")
+
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("🔄 Reset All Progress", use_container_width=True, key="reset_progress_btn"):
+            st.session_state.confirm_reset_progress = True
+
+    if st.session_state.get('confirm_reset_progress', False):
+        st.error("⚠️ Are you sure? This will delete ALL your progress, streaks, and bookmarks!")
+        col_a, col_b, col_c = st.columns([1, 1, 1])
+        with col_a:
+            if st.button("✅ Yes, Reset Everything", use_container_width=True):
+                reset_all_progress()
+                st.session_state.confirm_reset_progress = False
+                st.success("✨ Progress reset! You can start fresh now.")
+                st.rerun()
+        with col_b:
+            if st.button("❌ Cancel", use_container_width=True):
+                st.session_state.confirm_reset_progress = False
+                st.rerun()
+
+    render_love_footer("Look how far you've come! Every moment of effort counts. 📈")
+
 
 # ============================================
 # SAVE SESSION PROGRESS
@@ -1445,7 +1650,6 @@ def save_session_progress():
             'total': st.session_state.score['correct'] + st.session_state.score['incorrect']
         }
 
-        # Check if we already have an entry for today
         existing = next((i for i, s in enumerate(progress['daily_scores']) if s['date'] == today), None)
         if existing is not None:
             progress['daily_scores'][existing]['correct'] += daily_entry['correct']
@@ -1464,12 +1668,10 @@ def main():
     """Main application entry point"""
     load_css()
 
-    # Check authentication first
     if not st.session_state.authenticated:
         login_page()
         return
 
-    # Route to appropriate page
     page = st.session_state.current_page
 
     if page == 'home':
@@ -1482,6 +1684,8 @@ def main():
         timed_page()
     elif page == 'progress':
         progress_page()
+    elif page == 'resources':
+        resources_page()
     else:
         home_page()
 
